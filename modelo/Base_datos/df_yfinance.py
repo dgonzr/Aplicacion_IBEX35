@@ -43,3 +43,17 @@ for empresa in empresas:
     df_total = df_total.union(df)
 
 #df_total.write.mode("overwrite").parquet("modelo/data/lake/bronze/ibex")
+
+#Ej 1-c
+df = spark.read.parquet("modelo/data/lake/bronze/ibex")
+df.printSchema()
+#df.show(5)
+
+df = spark.read.parquet("modelo/data/lake/bronze/ibex").select("Date", "Close", "Ticker")
+#df.show()
+
+print("Leer solo estas tres columnas es más eficiente que leer todas las columnas y luego seleccionar" \
+" solo estas tres, ya que se reduce la cantidad de datos leídos y con estas columnas ya te puedes hacer una idea" \
+" de la evolución de cada empresa a lo largo del tiempo.")
+
+
