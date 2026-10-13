@@ -3,6 +3,7 @@ from sesion_spark import spark
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.window import *
+from delta.tables import DeltaTable
 
 #Ej 1-a
 estructura = StructType([
@@ -42,7 +43,10 @@ for empresa in empresas:
     df = df.withColumn("Ticker", lit(empresa))  #añadimos la columna Ticker con el valor de la empresa
     df_ibex = df_ibex.union(df)
 
-#df_ibex.write.mode("overwrite").parquet("modelo/data/lake/bronze/ibex")
+for col_name in df_ibex.columns:
+    df_ibex = df_ibex.withColumnRenamed(col_name, col_name.replace(" ", "_"))
+
+df_ibex.write.mode("overwrite").parquet("modelo/data/lake/bronze/ibex")
 
 #Ej 1-c
 df_ibex = spark.read.parquet("modelo/data/lake/bronze/ibex")
@@ -63,11 +67,21 @@ print("Tenemos tres columnas: Fecha, Sector y Sentimiento. Las tres vienen en fo
 
 #Ej 2-b
 print(f"Numero de filas en el dataframe de sentimiento: {df.count()}\n")
-df.write.mode("overwrite").parquet("modelo/data/lake/bronze/sentimiento")
+#df.write.mode("overwrite").parquet("modelo/data/lake/bronze/sentimiento")
 
 #Ej 2-c
-df.write.mode("append").parquet("modelo/data/lake/bronze/sentimiento")
-df = spark.read.parquet("modelo/data/lake/bronze/sentimiento")
-print(f"Numero de filas en el dataframe de sentimiento después de la carga con append: {df.count()}\n")
+"""df.write.mode("append").parquet("modelo/data/lake/bronze/sentimiento")
+df_repetido = spark.read.parquet("modelo/data/lake/bronze/sentimiento")
+print(f"Numero de filas en el dataframe de sentimiento después de la carga con append: {df_repetido.count()}\n")
 print("El numero de filas de duplica debido a que al hacer el append, añades al final las filas nuevas," \
 "no sobreescribes nada. Entonces almacenas otra vez la misma información y las filas se duplican.")
+df.write.mode("overwrite").parquet("modelo/data/lake/bronze/sentimiento") #vuelvo a hacer un overwrite para que no esté la información repetida"""
+
+#Ej 3
+DeltaTable.convertToDelta(spark, "parquet.`modelo/data/lake/bronze/ibex`")
+DeltaTable.convertToDelta(spark, "parquet.`modelo/data/lake/bronze/sentimiento`")
+DeltaTable.forPath(spark, "modelo/data/lake/bronze/ibex").history().show()
+DeltaTable.forPath(spark, "modelo/data/lake/bronze/sentimiento").history().show()
+print("Aparecen las versiones e información de los datos (como los bytes que ocupan) del dataframe guardado, aunque por ahora solo hay una versión de cada uno.")
+
+#Ej 4
