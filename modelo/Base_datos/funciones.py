@@ -65,6 +65,9 @@ class Funciones:
         """Cuenta las filas de un dataframe."""
         return df.count()
 
+    def contar_columnas(self, df):
+        return len(df.columns)
+
     def convertir_delta(self, ruta:str):
         """Convierte a Delta un dataframe en formato parquet usando la ruta pasada."""
         DeltaTable.convertToDelta(spark, ruta)
@@ -88,9 +91,38 @@ class Funciones:
             
         (destino.alias("d").merge(datos_nuevos.alias("n"), clave).whenNotMatchedInsertAll().execute())
 
-    def read_delta(self, ruta:str):
+    def delta_read(self, ruta:str):
         """Lee y devuelve los datos en la ruta específicada con formato Delta."""
         return spark.read.format("delta").load(ruta) 
+
+    def delta_write(self, df, ruta:str, modo:str, mergeSchema:str):
+        """Escribe el dataframe Delta pasado con el modo especificado en la ruta. Si mergeSchema es true, Delta no comprobará el esquema
+           de la nueva tabla y lo escribirá."""
+        df.write.format("delta").mode(modo).option("mergeSchema", mergeSchema).save(ruta)
+
+    def añadir_columna_closemas5(self, df):
+        """Añade la columna Close_mas5 que es la columna Close más 5 como el nombre indica."""
+        df = df.withColumn("Close_mas5", col("Close") + 5)
+        return df
+
+    def eliminar_filas(self, ruta:str, condicion:str):
+        """Elimina las filas que cumplen la condición."""
+        destino = DeltaTable.forPath(spark, "modelo/data/lake/bronze/ibex")
+        destino.delete(condicion)
+
+    def mostrar_version(self, ruta:str, version:int):
+        """Devuelve una version anterior de la tabla en la ruta pasada. No cambia la versión actual de los datos."""
+        df_v = spark.read.format("delta").option("versionAsOf",version).load(ruta)
+        return df_v
+
+    def volver_version(self, ruta:str, version:int):
+        """Utiliza restore para cambiar la tabla en la ruta por una versión anterior de ella misma."""
+        tabla = DeltaTable.forPath(spark, ruta)
+        tabla.restoreToVersion(version)
+
+    
+
+    
 
 
 
