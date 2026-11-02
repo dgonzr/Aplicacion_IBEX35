@@ -90,34 +90,71 @@ class Ejercicios:
         "y ya no hay filas nuevas en el segundo dataset que añadir al primero.\n")
 
     def Ejercicio5a(self):
+        print("Ej 5a\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
-        df_ibex = F.añadir_columna_closemas5(df_ibex)
+        df_ibex = F.añadir_columna_sumada(df_ibex, "Close", "Close_mas5", 5)
 
         F.delta_write(df_ibex, "modelo/data/lake/bronze/ibex", "append", "false")
         print("Efectivamente da error porque los esquemas no coinciden, ya la tabla nueva tiene una columnas de más.\n")
 
     def Ejercicio5b(self):
+        print("Ej 5b\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
-        df_ibex = F.añadir_columna_closemas5(df_ibex)
+        df_ibex = F.añadir_columna_sumada(df_ibex, "Close", "Close_mas5", 5)
         
         F.delta_write(df_ibex, "modelo/data/lake/bronze/ibex", "append", "true") # ahora con mergeSchema True
         print("Ahora sí que lo escribe, ya que con mergeSchema True no hace comprobación de esquemas.\n")
 
     def Ejercicio5c(self):
+        print("Ej 5c\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         print(f"Número de filas antes de eliminar las filas con Ticker BBVA: {F.contar_filas(df_ibex)}")
         F.eliminar_filas("modelo/data/lake/bronze/ibex", "Ticker = 'BBVA.MC'")
         print(f"Número de filas después de eliminar las filas con Ticker BBVA: {F.contar_filas(df_ibex)}\n")
 
     def Ejercicio5d(self):
+        print("Ej 5d\n")
         F.mostrar_historial_delta("modelo/data/lake/bronze/ibex")
-        df_ibex_v1 = F.mostrar_version("modelo/data/lake/bronze/ibex", 0)
+        df_ibex_v1 = F.mostrar_version("modelo/data/lake/bronze/ibex", 1)
         F.mostrar(df_ibex_v1)
 
     def Ejercicio6(self):
-        F.volver_version("modelo/data/lake/bronze/ibex", 0)
+        print("Ej 6\n")
+        F.volver_version("modelo/data/lake/bronze/ibex", 1)
         F.mostrar_historial_delta("modelo/data/lake/bronze/ibex")
 
+    def Ejercicio7(self):
+        print("Ej 7\n")
+        df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
+        df_sentimiento = F.delta_read("modelo/data/lake/bronze/sentimiento")
+        F.printschema(df_ibex)
+        F.printschema(df_sentimiento)
+        print(f"Tamaño de la base de datos del ibex35: {F.contar_filas(df_ibex)} x {F.contar_columnas(df_ibex)}")
+        print(f"Tamaño de la base de datos de sentimientos: {F.contar_filas(df_sentimiento)} x {F.contar_columnas(df_sentimiento)}")
+        print("Los datos de sentimientos por sector se pueden tener en cuenta a la hora de analizar la base de datos el ibex y ver si existe una" \
+        "correlación con las subidas y/o bajadas de cada empresa en la bolsa.")
 
+    def Ejercicio8(self):
+        print("Ej 8\n")
+        df_sentimiento = F.delta_read("modelo/data/lake/bronze/sentimiento")
+        # Nos interesa ver cuantos valores distintos hay en la columna de sectores
+        #F.mostrar(F.contar_valores_unicos(df_sentimiento, "Sector"))
+        #F.mostrar(F.lista_valores_unicos(df_sentimiento, "Sector"), 48) # mostramos los 48 valores únicos
+        df_sentimiento = F.normalizar_columna(df_sentimiento, "Sector") # normalizamos y volvemos a mostrar valores únicos
+        #F.mostrar(F.contar_valores_unicos(df_sentimiento, "Sector"))
+        #F.mostrar(F.lista_valores_unicos(df_sentimiento, "Sector"), 48)
+        print("Después de normalizar la columna Sector pasamos de 48 a 12 valores únicos. Ahora que hemos normalizado eliminemos posibles columnas duplicadas.")
+        print(f"Número de filas antes: {F.contar_filas(df_sentimiento)}")
 
+        df_sentimiento = F.eliminar_filas_duplicadas(df_sentimiento)
+        print(f"Número de filas después: {F.contar_filas(df_sentimiento)}")
+        print("No hay filas duplicadas. Ahora vamos con posibles valores nulos.")
+
+        for col in df_sentimiento.columns:   
+            print(f"Hay {F.contar_valores_nulos(df_sentimiento, col)} valores nulos en la columna {col}")
+
+        print("No hay valores nulos en ninguna fila, por lo que la base de datos de sentimientos ya está sin filas duplicadas, valores correctos en" \
+        "la columna sector y sin nulos.")
+
+        F.delta_write(df_sentimiento, "modelo/data/lake/silver/sentimiento", "overwrite", "false") # creamos la capa silver para la base de datos de sentimiento
 

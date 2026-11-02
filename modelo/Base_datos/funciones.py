@@ -100,15 +100,31 @@ class Funciones:
            de la nueva tabla y lo escribirá."""
         df.write.format("delta").mode(modo).option("mergeSchema", mergeSchema).save(ruta)
 
-    def añadir_columna_closemas5(self, df):
-        """Añade la columna Close_mas5 que es la columna Close más 5 como el nombre indica."""
-        df = df.withColumn("Close_mas5", col("Close") + 5)
+    def añadir_columna_sumada(self, df, columna_referencia: str, nueva_columna: str, valor_sumado: int):
+        """Añade una nueva columna que es la columna referencia más un valor pasado."""
+        df = df.withColumn(nueva_columna, col(columna_referencia) + valor_sumado)
         return df
 
     def eliminar_filas(self, ruta:str, condicion:str):
         """Elimina las filas que cumplen la condición."""
         destino = DeltaTable.forPath(spark, "modelo/data/lake/bronze/ibex")
         destino.delete(condicion)
+
+    def eliminar_filas_duplicadas(self, df):
+        """Devuelve el dataframe con filas duplicadas eliminadas."""
+        return df.distinct()
+
+    def contar_valores_nulos(self, df, columna:str):
+        """Devuelve el número de valores nulos en una columna."""
+        return df.filter(col(columna).isNull()).count()
+
+    def contar_valores_unicos(self, df, columna: str):
+        """Devuelve el número de valores únicos en una columna."""
+        return df.select(count_distinct(columna))
+
+    def lista_valores_unicos(self, df, columna: str):
+        """Devuelve un dataframe con los valores únicos en una columna."""
+        return df.select(columna).dropDuplicates()
 
     def mostrar_version(self, ruta:str, version:int):
         """Devuelve una version anterior de la tabla en la ruta pasada. No cambia la versión actual de los datos."""
@@ -119,6 +135,19 @@ class Funciones:
         """Utiliza restore para cambiar la tabla en la ruta por una versión anterior de ella misma."""
         tabla = DeltaTable.forPath(spark, ruta)
         tabla.restoreToVersion(version)
+
+    def normalizar_columna(self, df, columna: str):
+        """Pasado un dataframe y una columna, elimina espacios, quita acentos, pasa todo a minúsculas y lo devuelve."""
+        df_clean = df.withColumn(
+            columna,
+            translate(
+            lower(trim(regexp_replace(col(columna), r"\s+", " "))),
+            "áéíóúàèìòùñ",
+            "aeiouaeioun"
+            )
+        )
+
+        return df_clean
 
     
 
