@@ -4,6 +4,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.window import *
 from delta.tables import DeltaTable
+import pandas as pd
 
 class Funciones:
     def __init__(self):
@@ -95,10 +96,10 @@ class Funciones:
         """Lee y devuelve los datos en la ruta específicada con formato Delta."""
         return spark.read.format("delta").load(ruta) 
 
-    def delta_write(self, df, ruta:str, modo:str, mergeSchema:str):
+    def delta_write(self, df, ruta:str, modo:str, mergeSchema:str, overwriteSchema:str):
         """Escribe el dataframe Delta pasado con el modo especificado en la ruta. Si mergeSchema es true, Delta no comprobará el esquema
-           de la nueva tabla y lo escribirá."""
-        df.write.format("delta").mode(modo).option("mergeSchema", mergeSchema).save(ruta)
+           de la nueva tabla y lo escribirá. Si overwriteSchema es true, cambia el esquema (tipos de datos)."""
+        df.write.format("delta").mode(modo).option("mergeSchema", mergeSchema).option("overwriteSchema", overwriteSchema).save(ruta)
 
     def añadir_columna_sumada(self, df, columna_referencia: str, nueva_columna: str, valor_sumado: int):
         """Añade una nueva columna que es la columna referencia más un valor pasado."""
@@ -149,9 +150,23 @@ class Funciones:
 
         return df_clean
 
+    def cambiar_datatype(self, df, columna:str, tipo_nuevo:str):
+        """Devuelve el dataframe con la columna cambiada al tipo nuevo."""
+        return df.withColumn(columna, col(columna).cast(tipo_nuevo))
     
+    def añadir_sectores(self, df):
+        """Devuelve el dataframe del ibex con los sectores."""
+        empresas = ["ANA.MC", "ACX.MC", "ACS.MC", "AENA.MC", "AMS.MC", "MTS.MC", "BBVA.MC", "SAB.MC", "SAN.MC", "BKT.MC", "CABK.MC", "CLNX.MC", "COL.MC", "ENG.MC", "ELE.MC", "FER.MC", "FDR.MC", "GRF.MC", "IAG.MC", "IBE.MC", "ITX.MC", "IDR.MC", "LOG.MC", "MAP.MC", "MRL.MC", "NTGY.MC", "PUIG.MC", "RED.MC", "REP.MC", "ROVI.MC", "SCYR.MC", "SLR.MC", "TEF.MC", "UNI.MC"]
+        dic = {}
+        for e in empresas:
+            info = yf.Ticker(e).info
+            dic[e] = info.get("sector") # lo paso a minusculas porque así está en la base de datos de sentimiento
+        print(dic)
+        print(len(dic))
 
-    
+        map_expr = create_map([F.lit(x) for x in chain(*dic.items())])
 
+        df_con_sector = df.withColumn("Sector", map_expr[col("ticker")])
 
+        df_con_sector.show(truncate=False)
 
