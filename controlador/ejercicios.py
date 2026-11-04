@@ -141,10 +141,10 @@ class Ejercicios:
         df_sentimiento = F.delta_read("modelo/data/lake/bronze/sentimiento")
         # Nos interesa ver cuantos valores distintos hay en la columna de sectores
         F.mostrar(F.contar_valores_unicos(df_sentimiento, "Sector"))
-        F.mostrar(F.lista_valores_unicos(df_sentimiento, "Sector"), 48) # mostramos los 48 valores únicos
+        F.mostrar(F.obtener_valores_unicos(df_sentimiento, "Sector"), 48) # mostramos los 48 valores únicos
         df_sentimiento = F.normalizar_columna(df_sentimiento, "Sector") # normalizamos y volvemos a mostrar valores únicos
         F.mostrar(F.contar_valores_unicos(df_sentimiento, "Sector"))
-        F.mostrar(F.lista_valores_unicos(df_sentimiento, "Sector"), 48)
+        F.mostrar(F.obtener_valores_unicos(df_sentimiento, "Sector"), 48)
         print("Después de normalizar la columna Sector pasamos de 48 a 12 valores únicos. Ahora que hemos normalizado eliminemos posibles columnas duplicadas.")
         
         print(f"Número de filas antes: {F.contar_filas(df_sentimiento)}")
@@ -159,11 +159,12 @@ class Ejercicios:
         "la columna sector y sin nulos.")
 
         df_sentimiento = F.cambiar_datatype(df_sentimiento, "Sentimiento", "decimal(10,2)")
-        df_sentimiento = F.cambiar_datatype(df_sentimiento, "Fecha", "date")
+        df_sentimiento = F.cambiar_datatype(df_sentimiento, "Fecha", "Timestamp")
         F.printschema(df_sentimiento)
         F.delta_write(df_sentimiento, "modelo/data/lake/silver/sentimiento", "overwrite", "false", "true") # creamos la capa silver para la base de datos de sentimiento
 
     def Ejercicio9(self):
+        print("Ej 9\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         print(f"Número de filas antes: {F.contar_filas(df_ibex)}")
         df_ibex = F.eliminar_filas_duplicadas(df_ibex)
@@ -179,9 +180,22 @@ class Ejercicios:
         F.mostrar(df_ibex, 5)
         F.mostrar(F.contar_valores_unicos(df_ibex, "Ticker"))
         F.mostrar(F.contar_valores_unicos(df_ibex, "Sector"))
-        F.mostrar(F.lista_valores_unicos(df_ibex, "Sector"))
+        F.mostrar(F.obtener_valores_unicos(df_ibex, "Sector"))
 
         F.delta_write(df_ibex, "modelo/data/lake/silver/ibex", "overwrite", "true", "false") # creamos la capa silver para la base de datos de sentimiento
 
     def Ejercicio10(self):
-        pass
+        print("Ej 10\n")
+        df_ibex = F.delta_read("modelo/data/lake/silver/ibex")
+        df_sentimiento = F.delta_read("modelo/data/lake/silver/sentimiento")
+        df_ibex = F.reemplazar_columnas(df_ibex, "Date", "Fecha")
+        F.printschema(df_ibex)
+        F.printschema(df_sentimiento)
+        df = F.join(df_ibex, df_sentimiento, "left", "Fecha", "Sector")
+        print(f"Dimensiones del dataframe combinado: {F.contar_filas(df)} x {F.contar_columnas(df)}")
+        for column in df.columns:   
+            print(f"Hay {F.contar_valores_nulos(df, column)} valores nulos en la columna {column}")
+
+        print("Tenemos valores nulos en la columna Sentimiento a partir del 2026-10-01 ya que no hay datos de sentimiento ahí.")
+
+        F.delta_write(df, "modelo/data/lake/gold", "overwrite", "false", "false")

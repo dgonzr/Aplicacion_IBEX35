@@ -92,6 +92,12 @@ class Funciones:
             
         (destino.alias("d").merge(datos_nuevos.alias("n"), clave).whenNotMatchedInsertAll().execute())
 
+    def join(self, df1, df2, how:str, *columnas:str):
+        """Devuelve el dataframe después de hacer un join de los dos dataframes pasados."""
+        columnas = list(columnas)
+        nuevo_df = df1.join(df2, on=columnas, how=how)
+        return nuevo_df
+
     def delta_read(self, ruta:str):
         """Lee y devuelve los datos en la ruta específicada con formato Delta."""
         return spark.read.format("delta").load(ruta) 
@@ -119,11 +125,15 @@ class Funciones:
         """Devuelve un dataframe con el número de valores nulos en una columna."""
         return df.filter(col(columna).isNull()).count()
 
+    def obtener_valores_nulos(self, df, columna: str):
+        """Devuelve un dataframe con las filas donde la columna es nula."""
+        return df.filter(col(columna).isNull())
+
     def contar_valores_unicos(self, df, columna: str):
         """Devuelve un dataframe con el número de valores únicos en una columna."""
         return df.select(count_distinct(columna))
 
-    def lista_valores_unicos(self, df, columna: str):
+    def obtener_valores_unicos(self, df, columna: str):
         """Devuelve un dataframe con los valores únicos en una columna."""
         return df.select(columna).dropDuplicates()
 
@@ -161,9 +171,15 @@ class Funciones:
         for e in empresas:
             info = yf.Ticker(e).info
             dic[e] = info.get("sector") # lo paso a minusculas porque así está en la base de datos de sentimiento
-        print(dic)
-        print(len(dic))
 
         get_sector_udf = udf(lambda ticker: dic.get(ticker, "Sin Clasificar"), StringType())
         df_resultado = df.withColumn("Sector", get_sector_udf(col("Ticker")))
+        df_resultado = self.normalizar_columna(df_resultado, "Sector")
         return df_resultado
+
+    def comprobacion(self, df1, df2):
+        fechas_cotiz = df1.select("Sector").distinct()
+        fechas_sent = df2.select("Sector").distinct()
+
+        fechas_comunes = fechas_cotiz.intersect(fechas_sent)
+        print(f"Número de sectores en común: {fechas_comunes.count()}")
