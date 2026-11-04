@@ -17,7 +17,7 @@ class Ejercicios:
 
     def Ejercicio1b(self):
         print("Ej 1-b\n")
-        #creamos el dataframe con el primer histórico de la empresa ANA.MC
+        #creamos el dataframe con los históricos de las empresas
         df_ibex = F.crear_df_ibex("2024-10-01", "2026-10-01")
 
         df_ibex = F.reemplazar_columnas(df_ibex, " ", "_")
@@ -49,9 +49,8 @@ class Ejercicios:
         print(f"Numero de filas en el dataframe de sentimiento: {F.contar_filas(df_sentimiento)}\n")
         F.parquet_write(df_sentimiento, "modelo/data/lake/bronze/sentimiento", "overwrite")
 
-    def Ejercicio2c(self):
+    def Ejercicio2c(self, df_sentimiento):
         print("Ej 2-c\n")
-        df_sentimiento = F.parquet_read("modelo/data/lake/bronze/sentimiento")
         F.parquet_write(df_sentimiento, "modelo/data/lake/bronze/sentimiento", "append")
         df_repetido = F.parquet_read("modelo/data/lake/bronze/sentimiento")
         print(f"Numero de filas en el dataframe de sentimiento después de la carga con append: {F.contar_filas(df_repetido)}\n")
@@ -82,10 +81,10 @@ class Ejercicios:
         print(f"Número de filas antes del merge: {F.contar_filas(df_ibex)}")
 
         F.merge(df_ibex_hoy, "modelo/data/lake/bronze/ibex", ["Ticker", "Date"])
-        df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
+        df_ibex_merge = F.delta_read("modelo/data/lake/bronze/ibex")
 
-        print(f"Número de filas después del merge: {F.contar_filas(df_ibex)}\n")
-        print(f"El dataframe pasa de 17340 filas a 17782 filas al hacer el merge por primera vez")
+        print(f"Número de filas después del merge: {F.contar_filas(df_ibex_merge)}\n")
+        print(f"El dataframe pasa de {F.contar_filas(df_ibex)} filas a {F.contar_filas(df_ibex_merge)} filas al hacer el merge por primera vez")
         print("Cuando se ejecuta por segunda vez, el número de filas es el mismo porque ya se han mezclado antes " \
         "y ya no hay filas nuevas en el segundo dataset que añadir al primero.\n")
 
@@ -94,8 +93,10 @@ class Ejercicios:
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         df_ibex = F.añadir_columna_sumada(df_ibex, "Close", "Close_mas5", 5)
 
-        F.delta_write(df_ibex, "modelo/data/lake/bronze/ibex", "append", "false", "false")
-        print("Efectivamente da error porque los esquemas no coinciden, ya la tabla nueva tiene una columnas de más.\n")
+        try:
+            F.delta_write(df_ibex, "modelo/data/lake/bronze/ibex", "append", "false", "false")
+        except Exception as e:
+            print("Efectivamente da error porque los esquemas no coinciden, ya la tabla nueva tiene una columnas de más.\n")
 
     def Ejercicio5b(self):
         print("Ej 5b\n")
@@ -130,11 +131,10 @@ class Ejercicios:
         F.printschema(df_ibex)
         F.printschema(df_sentimiento)
         print(f"Tamaño de la base de datos del ibex35: {F.contar_filas(df_ibex)} x {F.contar_columnas(df_ibex)}")
-        print(f"Tamaño de la base de datos de sentimientos: {F.contar_filas(df_sentimiento)} x {F.contar_columnas(df_sentimiento)}")
-        print("Los datos de sentimientos por sector se pueden tener en cuenta a la hora de analizar la base de datos el ibex y ver si existe una" \
+        print(f"Tamaño de la base de datos de sentimientos: {F.contar_filas(df_sentimiento)} x {F.contar_columnas(df_sentimiento)}\n")
+        print("Los datos de sentimientos por sector se pueden tener en cuenta a la hora de analizar la base de datos el ibex y ver si existe una " \
         "correlación con las subidas y/o bajadas de cada empresa en la bolsa. Si existe esta correlación, podríamos pronosticar subidas o bajadas en " \
-        "bolsa de empresas en un sector específico dependiendo de sucesos que ocurran y provoquen el cambio del sentimiento por ese sector.")
-        print("En el ejercicio 9, al tratar con la base de datos del ibex, voy a añadir un nuevo dataframe")
+        "bolsa de empresas en un sector específico dependiendo de sucesos que ocurran y provoquen el cambio del sentimiento por ese sector.\n")
 
     def Ejercicio8(self):
         print("Ej 8\n")
@@ -166,19 +166,22 @@ class Ejercicios:
     def Ejercicio9(self):
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         print(f"Número de filas antes: {F.contar_filas(df_ibex)}")
-        #df_ibex = F.eliminar_filas_duplicadas(df_ibex)
+        df_ibex = F.eliminar_filas_duplicadas(df_ibex)
         print(f"Número de filas después: {F.contar_filas(df_ibex)}")
         print("Este dataframe al sacarlo de Yahoo no tiene duplicados y ya viene en formato limpio.")
 
-        #for column in df_ibex.columns:   
-            #print(f"Hay {F.contar_valores_nulos(df_ibex, column)} valores nulos en la columna {column}")
+        for column in df_ibex.columns:   
+            print(f"Hay {F.contar_valores_nulos(df_ibex, column)} valores nulos en la columna {column}")
         print("No hay nulos en la base de datos de yahoo.")
 
-        F.añadir_sectores(df_ibex)
+        df_ibex = F.añadir_sectores(df_ibex)
         F.printschema(df_ibex)
         F.mostrar(df_ibex, 5)
+        F.mostrar(F.contar_valores_unicos(df_ibex, "Ticker"))
+        F.mostrar(F.contar_valores_unicos(df_ibex, "Sector"))
+        F.mostrar(F.lista_valores_unicos(df_ibex, "Sector"))
 
-        #F.delta_write(df_ibex, "modelo/data/lake/silver/ibex", "overwrite", "false", "false") # creamos la capa silver para la base de datos de sentimiento
+        F.delta_write(df_ibex, "modelo/data/lake/silver/ibex", "overwrite", "true", "false") # creamos la capa silver para la base de datos de sentimiento
 
     def Ejercicio10(self):
         pass

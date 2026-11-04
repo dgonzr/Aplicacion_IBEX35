@@ -11,7 +11,7 @@ class Practica1:
         #entrega.Ejercicio1c()
         #df = entrega.Ejercicio2a()
         #entrega.Ejercicio2b(df)
-        #entrega.Ejercicio2c()
+        #entrega.Ejercicio2c(df)
         #entrega.Ejercicio3()
         #entrega.Ejercicio4()
         #entrega.Ejercicio5a()
