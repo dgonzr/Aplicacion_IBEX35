@@ -22,5 +22,6 @@ class Practica1:
         #entrega.Ejercicio7()
         #entrega.Ejercicio8()
         #entrega.Ejercicio9()
-        entrega.Ejercicio10()
+        #entrega.Ejercicio10()
+        entrega.Ejercicio13()
 

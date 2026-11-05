@@ -132,6 +132,20 @@ class Ejercicios:
         F.printschema(df_sentimiento)
         print(f"Tamaño de la base de datos del ibex35: {F.contar_filas(df_ibex)} x {F.contar_columnas(df_ibex)}")
         print(f"Tamaño de la base de datos de sentimientos: {F.contar_filas(df_sentimiento)} x {F.contar_columnas(df_sentimiento)}\n")
+        F.mostrar(F.contar_valores_unicos(df_sentimiento, "Sector"))
+        F.mostrar(F.obtener_valores_unicos(df_sentimiento, "Sector"), 48) # mostramos los 48 valores únicos
+        print("La columna de sector de la base de datos de sentimiento tiene muchos valores incorrectamente escritos. En el ejercicio 8 los normalizaremos.\n")
+
+        for column in df_sentimiento.columns:   
+            print(f"Hay {F.contar_valores_nulos(df_sentimiento, column)} valores nulos en la columna {column}")
+        print("No hay valores nulos en ninguna fila, por lo que la base de datos de sentimientos ya está sin filas duplicadas, valores correctos en" \
+        "la columna sector y sin nulos.\n")
+
+        for column in df_ibex.columns:   
+            print(f"Hay {F.contar_valores_nulos(df_ibex, column)} valores nulos en la columna {column}")
+        print("No hay nulos en la base de datos de yahoo.\n")
+
+
         print("Los datos de sentimientos por sector se pueden tener en cuenta a la hora de analizar la base de datos el ibex y ver si existe una " \
         "correlación con las subidas y/o bajadas de cada empresa en la bolsa. Si existe esta correlación, podríamos pronosticar subidas o bajadas en " \
         "bolsa de empresas en un sector específico dependiendo de sucesos que ocurran y provoquen el cambio del sentimiento por ese sector.\n")
@@ -140,8 +154,6 @@ class Ejercicios:
         print("Ej 8\n")
         df_sentimiento = F.delta_read("modelo/data/lake/bronze/sentimiento")
         # Nos interesa ver cuantos valores distintos hay en la columna de sectores
-        F.mostrar(F.contar_valores_unicos(df_sentimiento, "Sector"))
-        F.mostrar(F.obtener_valores_unicos(df_sentimiento, "Sector"), 48) # mostramos los 48 valores únicos
         df_sentimiento = F.normalizar_columna(df_sentimiento, "Sector") # normalizamos y volvemos a mostrar valores únicos
         F.mostrar(F.contar_valores_unicos(df_sentimiento, "Sector"))
         F.mostrar(F.obtener_valores_unicos(df_sentimiento, "Sector"), 48)
@@ -150,13 +162,8 @@ class Ejercicios:
         print(f"Número de filas antes: {F.contar_filas(df_sentimiento)}")
         df_sentimiento = F.eliminar_filas_duplicadas(df_sentimiento)
         print(f"Número de filas después: {F.contar_filas(df_sentimiento)}")
-        print("No hay filas duplicadas. Ahora vamos con posibles valores nulos.")
+        print("No hay filas duplicadas.\n")
 
-        for column in df_sentimiento.columns:   
-            print(f"Hay {F.contar_valores_nulos(df_sentimiento, column)} valores nulos en la columna {column}")
-
-        print("No hay valores nulos en ninguna fila, por lo que la base de datos de sentimientos ya está sin filas duplicadas, valores correctos en" \
-        "la columna sector y sin nulos.")
 
         df_sentimiento = F.cambiar_datatype(df_sentimiento, "Sentimiento", "decimal(10,2)")
         df_sentimiento = F.cambiar_datatype(df_sentimiento, "Fecha", "Timestamp")
@@ -170,10 +177,6 @@ class Ejercicios:
         df_ibex = F.eliminar_filas_duplicadas(df_ibex)
         print(f"Número de filas después: {F.contar_filas(df_ibex)}")
         print("Este dataframe al sacarlo de Yahoo no tiene duplicados y ya viene en formato limpio.")
-
-        for column in df_ibex.columns:   
-            print(f"Hay {F.contar_valores_nulos(df_ibex, column)} valores nulos en la columna {column}")
-        print("No hay nulos en la base de datos de yahoo.")
 
         df_ibex = F.añadir_sectores(df_ibex)
         F.printschema(df_ibex)
@@ -191,11 +194,33 @@ class Ejercicios:
         df_ibex = F.reemplazar_columnas(df_ibex, "Date", "Fecha")
         F.printschema(df_ibex)
         F.printschema(df_sentimiento)
-        df = F.join(df_ibex, df_sentimiento, "left", "Fecha", "Sector")
+        df = F.join(df_ibex, df_sentimiento, "inner", "Fecha", "Sector")
         print(f"Dimensiones del dataframe combinado: {F.contar_filas(df)} x {F.contar_columnas(df)}")
         for column in df.columns:   
             print(f"Hay {F.contar_valores_nulos(df, column)} valores nulos en la columna {column}")
 
-        print("Tenemos valores nulos en la columna Sentimiento a partir del 2026-10-01 ya que no hay datos de sentimiento ahí.")
+        print("Al hacer un inner join, las filas que no tienen valores de Fecha y Sector coincidentes no se añaden, por lo que no hay nulos.")
 
         F.delta_write(df, "modelo/data/lake/gold", "overwrite", "false", "false")
+
+    def Ejercicio13(self):
+        df = F.delta_read("modelo/data/lake/gold")
+
+        # Dimensión Ticker
+        df_ticker = F.crear_dimension_ticker(df)
+
+        # Dimensión Fecha
+        df_fecha = F.crear_dimension_fecha(df)
+
+        # Hechos
+        df_hechos = F.crear_hechos(df)
+
+        F.mostrar(df_ticker)
+        print(F.contar_filas(df_ticker))
+        F.mostrar(df_fecha)
+        F.mostrar(df_hechos)
+
+        F.parquet_write(df_ticker, "modelo/data/export/gold/dim_ticker", "overwrite")
+        F.parquet_write(df_fecha, "modelo/data/export/gold/dim_fecha", "overwrite")
+        F.parquet_write(df_hechos, "modelo/data/export/gold/hechos", "overwrite")
+

@@ -4,7 +4,6 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.window import *
 from delta.tables import DeltaTable
-import pandas as pd
 
 class Funciones:
     def __init__(self):
@@ -177,9 +176,20 @@ class Funciones:
         df_resultado = self.normalizar_columna(df_resultado, "Sector")
         return df_resultado
 
-    def comprobacion(self, df1, df2):
-        fechas_cotiz = df1.select("Sector").distinct()
-        fechas_sent = df2.select("Sector").distinct()
+    def crear_dimension_ticker(self, df):
+        """Devuelve un dataframe con las columnas Ticker y Sector para la dimensión del Ticker."""
+        return df.select(col("Ticker"), col("Sector")).distinct()
 
-        fechas_comunes = fechas_cotiz.intersect(fechas_sent)
-        print(f"Número de sectores en común: {fechas_comunes.count()}")
+    def crear_dimension_fecha(self, df):
+            """Devuelve un dataframe no solo con la columna de fecha, sino con el año, mes, trimestre y dia de la semana para la dimensión de la fecha."""
+            df_fecha = df.select("Fecha").distinct() \
+            .withColumn("Año", year("Fecha")) \
+            .withColumn("Mes", month("Fecha")) \
+            .withColumn("Trimestre", quarter("Fecha")) \
+            .withColumn("Dia_semana", date_format("Fecha", "E"))
+
+            return df_fecha
+
+    def crear_hechos(self, df):
+        """Devuelve un dataframe con la tabla de hechos (precios de apertura, cierre, máximos, mínimos...)"""
+        return df.select(col("Ticker"), col("Fecha"), col("Open"), col("High"), col("Low"), col("Close"), col("Adj_close"), col("Volume"), col("Dividends"), col("Stock_Splits"), col("Sentimiento"))
