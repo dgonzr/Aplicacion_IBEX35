@@ -1,27 +1,30 @@
 from controlador.ejercicios import Ejercicios
 
-class Practica1:
+class Practica:
     def __init__(self):
+        self.entrega = Ejercicios()
+
+    def practica1(self):
+        # self.entrega.Ejercicio1a()
+        # self.entrega.Ejercicio1b()
+        # self.entrega.Ejercicio1c()
+        # df = self.entrega.Ejercicio2a()
+        # self.entrega.Ejercicio2b(df)
+        # self.entrega.Ejercicio2c(df)
+        # self.entrega.Ejercicio3()
+        # self.entrega.Ejercicio4()
+        # self.entrega.Ejercicio5a()
+        # self.entrega.Ejercicio5b()
+        # self.entrega.Ejercicio5c()
+        # self.entrega.Ejercicio5d()
+        # self.entrega.Ejercicio6()
+        # self.entrega.Ejercicio7()
+        # self.entrega.Ejercicio8()
+        # self.entrega.Ejercicio9()
+        # self.entrega.Ejercicio10()
+        # self.entrega.Ejercicio13()
         pass
 
-    def ejecutar_ejercicios(self):
-        entrega = Ejercicios()
-        #entrega.Ejercicio1a()
-        #entrega.Ejercicio1b()
-        #entrega.Ejercicio1c()
-        #df = entrega.Ejercicio2a()
-        #entrega.Ejercicio2b(df)
-        #entrega.Ejercicio2c(df)
-        #entrega.Ejercicio3()
-        #entrega.Ejercicio4()
-        #entrega.Ejercicio5a()
-        #entrega.Ejercicio5b()
-        #entrega.Ejercicio5c()
-        #entrega.Ejercicio5d()
-        #entrega.Ejercicio6()
-        #entrega.Ejercicio7()
-        #entrega.Ejercicio8()
-        #entrega.Ejercicio9()
-        #entrega.Ejercicio10()
-        entrega.Ejercicio13()
+    def practica2(self):
+        self.entrega.Ejercicio2_1()
 

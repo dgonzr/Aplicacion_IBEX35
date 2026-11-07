@@ -4,6 +4,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.window import *
 from delta.tables import DeltaTable
+from pathlib import Path
+import shutil
+from uuid import uuid4
 
 class Funciones:
     def __init__(self):
@@ -193,3 +196,39 @@ class Funciones:
     def crear_hechos(self, df):
         """Devuelve un dataframe con la tabla de hechos (precios de apertura, cierre, máximos, mínimos...)"""
         return df.select(col("Ticker"), col("Fecha"), col("Open"), col("High"), col("Low"), col("Close"), col("Adj_close"), col("Volume"), col("Dividends"), col("Stock_Splits"), col("Sentimiento"))
+
+    def coalesce(self, df, n: int, ruta: str, modo: str):
+        """Reduce el número de particiones de una carpeta Parquet a n."""
+        destino = Path(ruta).resolve()
+        sufijo = uuid4().hex
+        temporal = destino.with_name(f"{destino.name}_tmp_{sufijo}")
+        respaldo = destino.with_name(f"{destino.name}_bak_{sufijo}")
+        respaldo_creado = False
+
+        # hay que crear carpetas temporales para escribirlo ya que al leer y sobreescribir la misma carpeta da error
+        try:
+            # Escribe completamente en otra ruta antes de reemplazar el origen.
+            df.coalesce(n).write.mode(modo).parquet(str(temporal))
+
+            if destino.exists():
+                destino.rename(respaldo)
+                respaldo_creado = True
+
+            try:
+                temporal.rename(destino)
+            except Exception:
+                if respaldo_creado and respaldo.exists() and not destino.exists():
+                    respaldo.rename(destino)
+                    respaldo_creado = False
+                raise
+
+            if respaldo_creado:
+                shutil.rmtree(respaldo)
+        except Exception:
+            # Restaura la carpeta original si el reemplazo falla.
+            if respaldo_creado and not destino.exists() and respaldo.exists():
+                respaldo.rename(destino)
+            raise
+        finally:
+            if temporal.exists():
+                shutil.rmtree(temporal)

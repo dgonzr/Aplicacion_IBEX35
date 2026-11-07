@@ -210,17 +210,30 @@ class Ejercicios:
         df_ticker = F.crear_dimension_ticker(df)
 
         # Dimensión Fecha
-        df_fecha = F.crear_dimension_fecha(df)
+        #df_fecha = F.crear_dimension_fecha(df)
 
         # Hechos
-        df_hechos = F.crear_hechos(df)
+        #df_hechos = F.crear_hechos(df)
 
         F.mostrar(df_ticker)
         print(F.contar_filas(df_ticker))
-        F.mostrar(df_fecha)
-        F.mostrar(df_hechos)
+        #F.mostrar(df_fecha)
+        #F.mostrar(df_hechos)
 
         F.parquet_write(df_ticker, "modelo/data/export/gold/dim_ticker", "overwrite")
-        F.parquet_write(df_fecha, "modelo/data/export/gold/dim_fecha", "overwrite")
-        F.parquet_write(df_hechos, "modelo/data/export/gold/hechos", "overwrite")
+        #F.parquet_write(df_fecha, "modelo/data/export/gold/dim_fecha", "overwrite")
+        #F.parquet_write(df_hechos, "modelo/data/export/gold/hechos", "overwrite")
+
+
+    #----------------------------Práctica 2------------------------------------------#
+
+    def Ejercicio2_1(self):
+        df_dim_ticker = F.parquet_read("modelo/data/export/gold/dim_ticker")
+        df_dim_fecha = F.parquet_read("modelo/data/export/gold/dim_fecha")
+        df_hechos = F.parquet_read("modelo/data/export/gold/hechos")
+
+        # se reduce el número de particiones a 1 en cada carpeta de la capa gold para exportar
+        F.coalesce(df_dim_ticker, 1, "modelo/data/export/gold/dim_ticker", "overwrite")
+        F.coalesce(df_dim_fecha, 1, "modelo/data/export/gold/dim_fecha", "overwrite")
+        F.coalesce(df_hechos, 1, "modelo/data/export/gold/hechos", "overwrite")
 

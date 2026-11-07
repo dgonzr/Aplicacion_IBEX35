@@ -1,4 +1,6 @@
-from vista.ejecutar_ejercicios import Practica1
+from vista.ejecutar_ejercicios import *
 
-practica1 = Practica1()
-practica1.ejecutar_ejercicios()
+practica = Practica()
+
+practica.practica1()
+practica.practica2()
