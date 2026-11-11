@@ -166,7 +166,8 @@ class Ejercicios:
 
 
         df_sentimiento = F.cambiar_datatype(df_sentimiento, "Sentimiento", "decimal(10,2)")
-        df_sentimiento = F.cambiar_datatype(df_sentimiento, "Fecha", "Timestamp")
+        df_sentimiento = F.cambiar_datatype(df_sentimiento, "Fecha", "Date")
+
         F.printschema(df_sentimiento)
         F.delta_write(df_sentimiento, "modelo/data/lake/silver/sentimiento", "overwrite", "false", "true") # creamos la capa silver para la base de datos de sentimiento
 
@@ -178,6 +179,8 @@ class Ejercicios:
         print(f"Número de filas después: {F.contar_filas(df_ibex)}")
         print("Este dataframe al sacarlo de Yahoo no tiene duplicados y ya viene en formato limpio.")
 
+        df_ibex = F.cambiar_datatype(df_ibex, "Date", "Date")
+
         df_ibex = F.añadir_sectores(df_ibex)
         F.printschema(df_ibex)
         F.mostrar(df_ibex, 5)
@@ -185,7 +188,7 @@ class Ejercicios:
         F.mostrar(F.contar_valores_unicos(df_ibex, "Sector"))
         F.mostrar(F.obtener_valores_unicos(df_ibex, "Sector"))
 
-        F.delta_write(df_ibex, "modelo/data/lake/silver/ibex", "overwrite", "true", "false") # creamos la capa silver para la base de datos de sentimiento
+        F.delta_write(df_ibex, "modelo/data/lake/silver/ibex", "overwrite", "true", "true") # creamos la capa silver para la base de datos de sentimiento
 
     def Ejercicio10(self):
         print("Ej 10\n")
@@ -201,7 +204,7 @@ class Ejercicios:
 
         print("Al hacer un inner join, las filas que no tienen valores de Fecha y Sector coincidentes no se añaden, por lo que no hay nulos.")
 
-        F.delta_write(df, "modelo/data/lake/gold", "overwrite", "false", "false")
+        F.delta_write(df, "modelo/data/lake/gold", "overwrite", "false", "true")
 
     def Ejercicio13(self):
         df = F.delta_read("modelo/data/lake/gold")
@@ -210,24 +213,28 @@ class Ejercicios:
         df_ticker = F.crear_dimension_ticker(df)
 
         # Dimensión Fecha
-        #df_fecha = F.crear_dimension_fecha(df)
+        df_fecha = F.crear_dimension_fecha(df)
 
         # Hechos
-        #df_hechos = F.crear_hechos(df)
+        df_hechos = F.crear_hechos(df)
 
         F.mostrar(df_ticker)
         print(F.contar_filas(df_ticker))
-        #F.mostrar(df_fecha)
-        #F.mostrar(df_hechos)
+        F.mostrar(df_fecha)
+        F.mostrar(df_hechos)
 
         F.parquet_write(df_ticker, "modelo/data/export/gold/dim_ticker", "overwrite")
-        #F.parquet_write(df_fecha, "modelo/data/export/gold/dim_fecha", "overwrite")
-        #F.parquet_write(df_hechos, "modelo/data/export/gold/hechos", "overwrite")
+        F.parquet_write(df_fecha, "modelo/data/export/gold/dim_fecha", "overwrite")
+        F.parquet_write(df_hechos, "modelo/data/export/gold/hechos", "overwrite")
+
+        df = F.parquet_read("modelo/data/export/gold/dim_fecha")
+        F.mostrar(df)
 
 
     #----------------------------Práctica 2------------------------------------------#
 
     def Ejercicio2_1(self):
+        print("Ejercicio 1 práctica 2\n")
         df_dim_ticker = F.parquet_read("modelo/data/export/gold/dim_ticker")
         df_dim_fecha = F.parquet_read("modelo/data/export/gold/dim_fecha")
         df_hechos = F.parquet_read("modelo/data/export/gold/hechos")
