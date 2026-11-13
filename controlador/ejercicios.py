@@ -6,8 +6,6 @@ class Ejercicios:
         pass
 
     def Ejercicio1a(self):
-        print("Ej 1-a")
-
         print("\nColumna fecha: no admite nulos, es necesario saber de que día es cada columna\n" \
         "Columnas Open, High, Low y Close: no admiten nulos, todas las empresas tienen que tener un precio de apertura, máximo, mínimo y cierre\n" \
         "Columna Volume: sí admite nulos, puede que alguna empresa no tenga volumen de negociación en algún día\n" \
@@ -16,7 +14,6 @@ class Ejercicios:
         "Columna Ticker: no admite nulos, es necesario saber a que empresa pertenece cada fila\n")
 
     def Ejercicio1b(self):
-        print("Ej 1-b\n")
         #creamos el dataframe con los históricos de las empresas
         df_ibex = F.crear_df_ibex("2024-10-01", "2026-10-01")
 
@@ -24,7 +21,6 @@ class Ejercicios:
         F.parquet_write(df_ibex, "modelo/data/lake/bronze/ibex", "overwrite")
 
     def Ejercicio1c(self):
-        print("Ej 1-c\n")
         df_ibex = F.parquet_read("modelo/data/lake/bronze/ibex")
         F.printschema(df_ibex)
         F.mostrar(df_ibex, 5)
@@ -38,19 +34,16 @@ class Ejercicios:
         " de la evolución de cada empresa a lo largo del tiempo.\n")
 
     def Ejercicio2a(self):
-        print("Ej 2-a\n")
         df_sentimiento = F.leer_csv("modelo/data/sentimiento_ibex.csv", True, ";")
         F.printschema(df_sentimiento)
         print("Tenemos tres columnas: Fecha, Sector y Sentimiento. Las tres vienen en formato de string al leerlo de un csv.\n")
         return df_sentimiento
 
     def Ejercicio2b(self, df_sentimiento):
-        print("Ej 2-b\n")
         print(f"Numero de filas en el dataframe de sentimiento: {F.contar_filas(df_sentimiento)}\n")
         F.parquet_write(df_sentimiento, "modelo/data/lake/bronze/sentimiento", "overwrite")
 
     def Ejercicio2c(self, df_sentimiento):
-        print("Ej 2-c\n")
         F.parquet_write(df_sentimiento, "modelo/data/lake/bronze/sentimiento", "append")
         df_repetido = F.parquet_read("modelo/data/lake/bronze/sentimiento")
         print(f"Numero de filas en el dataframe de sentimiento después de la carga con append: {F.contar_filas(df_repetido)}\n")
@@ -59,7 +52,6 @@ class Ejercicios:
         F.parquet_write(df_sentimiento, "modelo/data/lake/bronze/sentimiento", "overwrite") #vuelvo a hacer un overwrite con el dataframe inicial para que no esté la información repetida"""
 
     def Ejercicio3(self):
-        print("Ej 3\n")
         F.convertir_delta("parquet.`modelo/data/lake/bronze/ibex`")
         F.convertir_delta("parquet.`modelo/data/lake/bronze/sentimiento`")
         F.mostrar_historial_delta("modelo/data/lake/bronze/ibex")
@@ -68,7 +60,6 @@ class Ejercicios:
         " aunque por ahora solo hay una versión de cada uno.\n")
 
     def Ejercicio4(self):
-        print("Ej 4\n")
         v = F.mostrar_version_delta("modelo/data/lake/bronze/ibex")
         print(f"Versión de la base de datos del ibex: {v}")
 
@@ -89,7 +80,6 @@ class Ejercicios:
         "y ya no hay filas nuevas en el segundo dataset que añadir al primero.\n")
 
     def Ejercicio5a(self):
-        print("Ej 5a\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         df_ibex = F.añadir_columna_sumada(df_ibex, "Close", "Close_mas5", 5)
 
@@ -99,7 +89,6 @@ class Ejercicios:
             print("Efectivamente da error porque los esquemas no coinciden, ya la tabla nueva tiene una columnas de más.\n")
 
     def Ejercicio5b(self):
-        print("Ej 5b\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         df_ibex = F.añadir_columna_sumada(df_ibex, "Close", "Close_mas5", 5)
         
@@ -107,14 +96,12 @@ class Ejercicios:
         print("Ahora sí que lo escribe, ya que con mergeSchema True no hace comprobación de esquemas.\n")
 
     def Ejercicio5c(self):
-        print("Ej 5c\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         print(f"Número de filas antes de eliminar las filas con Ticker BBVA: {F.contar_filas(df_ibex)}")
         F.eliminar_filas("modelo/data/lake/bronze/ibex", "Ticker = 'BBVA.MC'")
         print(f"Número de filas después de eliminar las filas con Ticker BBVA: {F.contar_filas(df_ibex)}\n")
 
     def Ejercicio5d(self):
-        print("Ej 5d\n")
         F.mostrar_historial_delta("modelo/data/lake/bronze/ibex")
         df_ibex_v1 = F.mostrar_version("modelo/data/lake/bronze/ibex", 1)
         F.mostrar(df_ibex_v1)
@@ -125,7 +112,6 @@ class Ejercicios:
         F.mostrar_historial_delta("modelo/data/lake/bronze/ibex")
 
     def Ejercicio7(self):
-        print("Ej 7\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         df_sentimiento = F.delta_read("modelo/data/lake/bronze/sentimiento")
         F.printschema(df_ibex)
@@ -151,7 +137,6 @@ class Ejercicios:
         "bolsa de empresas en un sector específico dependiendo de sucesos que ocurran y provoquen el cambio del sentimiento por ese sector.\n")
 
     def Ejercicio8(self):
-        print("Ej 8\n")
         df_sentimiento = F.delta_read("modelo/data/lake/bronze/sentimiento")
         # Nos interesa ver cuantos valores distintos hay en la columna de sectores
         df_sentimiento = F.normalizar_columna(df_sentimiento, "Sector") # normalizamos y volvemos a mostrar valores únicos
@@ -172,7 +157,6 @@ class Ejercicios:
         F.delta_write(df_sentimiento, "modelo/data/lake/silver/sentimiento", "overwrite", "false", "true") # creamos la capa silver para la base de datos de sentimiento
 
     def Ejercicio9(self):
-        print("Ej 9\n")
         df_ibex = F.delta_read("modelo/data/lake/bronze/ibex")
         print(f"Número de filas antes: {F.contar_filas(df_ibex)}")
         df_ibex = F.eliminar_filas_duplicadas(df_ibex)
@@ -191,7 +175,6 @@ class Ejercicios:
         F.delta_write(df_ibex, "modelo/data/lake/silver/ibex", "overwrite", "true", "true") # creamos la capa silver para la base de datos de sentimiento
 
     def Ejercicio10(self):
-        print("Ej 10\n")
         df_ibex = F.delta_read("modelo/data/lake/silver/ibex")
         df_sentimiento = F.delta_read("modelo/data/lake/silver/sentimiento")
         df_ibex = F.reemplazar_columnas(df_ibex, "Date", "Fecha")
@@ -234,7 +217,6 @@ class Ejercicios:
     #----------------------------Práctica 2------------------------------------------#
 
     def Ejercicio2_1(self):
-        print("Ejercicio 1 práctica 2\n")
         df_dim_ticker = F.parquet_read("modelo/data/export/gold/dim_ticker")
         df_dim_fecha = F.parquet_read("modelo/data/export/gold/dim_fecha")
         df_hechos = F.parquet_read("modelo/data/export/gold/hechos")
