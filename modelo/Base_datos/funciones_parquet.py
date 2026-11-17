@@ -232,3 +232,6 @@ class Funciones:
         finally:
             if temporal.exists():
                 shutil.rmtree(temporal)
+
+    def filtrar_dataset(df, columna, valor):
+        return df.filter(col(columna) == valor)
