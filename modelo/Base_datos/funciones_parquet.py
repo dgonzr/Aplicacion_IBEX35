@@ -233,5 +233,10 @@ class Funciones:
             if temporal.exists():
                 shutil.rmtree(temporal)
 
-    def filtrar_dataset(df, columna, valor):
+    def filtrar_dataset(self, df, columna, valor):
+        """Devuelve un dataset solo con las filas en las que cierta columna tenga cierto valor."""
         return df.filter(col(columna) == valor)
+
+    def seleccionar_columnas(self, df, *columnas):
+        """Devuelve un dataset solo con las columnas pasadas por argumento."""
+        return df.select(*columnas)
