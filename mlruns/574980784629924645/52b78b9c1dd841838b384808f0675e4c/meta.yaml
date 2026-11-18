@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/574980784629924645/52b78b9c1dd841838b384808f0675e4c/artifacts
+end_time: 1795000940894
+entry_point_name: ''
+experiment_id: '574980784629924645'
+lifecycle_stage: active
+run_id: 52b78b9c1dd841838b384808f0675e4c
+run_name: upset-doe-733
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795000925346
+status: 3
+tags: []
+user_id: PC

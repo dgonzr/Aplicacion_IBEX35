@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/574980784629924645/5b178ec59a334d81879667e286432756/artifacts
+end_time: 1795000878321
+entry_point_name: ''
+experiment_id: '574980784629924645'
+lifecycle_stage: active
+run_id: 5b178ec59a334d81879667e286432756
+run_name: traveling-calf-604
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795000861117
+status: 3
+tags: []
+user_id: PC

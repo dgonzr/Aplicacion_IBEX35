@@ -53,5 +53,6 @@ class Practica:
 
     def practica3(self):
         print("Ejercicio 1 práctica 3\n")
-        self.entrega3.Ejercicio1()
+        #self.entrega3.Ejercicio1()
+        self.entrega3.Ejercicio2()
 
