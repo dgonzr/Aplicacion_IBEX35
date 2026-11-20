@@ -52,7 +52,14 @@ class Practica:
         self.entrega2.Ejercicio1()
 
     def practica3(self):
-        print("Ejercicio 1 práctica 3\n")
-        #self.entrega3.Ejercicio1()
-        self.entrega3.Ejercicio2()
+        # print("Ejercicio 1 práctica 3\n")
+        # self.entrega3.Ejercicio1()
+        # print("Ejercicio 2 práctica 3\n")
+        # self.entrega3.Ejercicio2()
+        # print("Ejercicio 3 práctica 3\n")
+        # self.entrega3.Ejercicio3()
+        # print("Ejercicio 4 práctica 3\n")
+        # self.entrega3.Ejercicio4()
+        print("Ejercicio 5 práctica 3\n")
+        self.entrega3.Ejercicio5()
 

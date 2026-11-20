@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/be68d3b579eb4b2798ca0fcd7c7368e6/artifacts
+end_time: 1795193070251
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: be68d3b579eb4b2798ca0fcd7c7368e6
+run_name: masked-cat-94
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795193052023
+status: 3
+tags: []
+user_id: PC

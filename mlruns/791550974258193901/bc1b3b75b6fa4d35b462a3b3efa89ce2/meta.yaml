@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/bc1b3b75b6fa4d35b462a3b3efa89ce2/artifacts
+end_time: 1795193019444
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: bc1b3b75b6fa4d35b462a3b3efa89ce2
+run_name: dapper-sheep-432
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795193003462
+status: 3
+tags: []
+user_id: PC

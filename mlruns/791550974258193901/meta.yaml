@@ -1,0 +1,9 @@
+artifact_location: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901
+creation_time: 1795191017770
+effective_trace_archival_retention: null
+experiment_id: '791550974258193901'
+last_update_time: 1795191017770
+lifecycle_stage: active
+name: Ej5_Hyperopt_SAN
+trace_location: null
+workspace: default

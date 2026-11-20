@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/3bb3e39dee18416eb2fddc379fe45038/artifacts
+end_time: 1795193036042
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: 3bb3e39dee18416eb2fddc379fe45038
+run_name: melodic-fish-159
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795193019454
+status: 3
+tags: []
+user_id: PC

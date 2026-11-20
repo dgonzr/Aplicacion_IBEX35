@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/81741b2fb441433699eb9fde166bbcd9/artifacts
+end_time: 1795191044553
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: 81741b2fb441433699eb9fde166bbcd9
+run_name: intelligent-eel-228
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795191018214
+status: 3
+tags: []
+user_id: PC

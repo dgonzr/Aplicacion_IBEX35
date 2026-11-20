@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/574980784629924645/6871682ad0b441aaa276534b69ad1fb5/artifacts
+end_time: 1795192953305
+entry_point_name: ''
+experiment_id: '574980784629924645'
+lifecycle_stage: active
+run_id: 6871682ad0b441aaa276534b69ad1fb5
+run_name: traveling-horse-225
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795192936230
+status: 3
+tags: []
+user_id: PC

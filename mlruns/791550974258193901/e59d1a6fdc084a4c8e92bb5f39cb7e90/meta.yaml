@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/e59d1a6fdc084a4c8e92bb5f39cb7e90/artifacts
+end_time: 1795191488483
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: e59d1a6fdc084a4c8e92bb5f39cb7e90
+run_name: bustling-seal-758
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795191471379
+status: 3
+tags: []
+user_id: PC

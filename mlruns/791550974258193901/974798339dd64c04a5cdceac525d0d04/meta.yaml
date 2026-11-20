@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/974798339dd64c04a5cdceac525d0d04/artifacts
+end_time: 1795191134529
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: 974798339dd64c04a5cdceac525d0d04
+run_name: smiling-pig-27
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795191116694
+status: 3
+tags: []
+user_id: PC

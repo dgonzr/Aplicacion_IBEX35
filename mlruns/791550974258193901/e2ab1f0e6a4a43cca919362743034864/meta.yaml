@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/e2ab1f0e6a4a43cca919362743034864/artifacts
+end_time: 1795191522770
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: e2ab1f0e6a4a43cca919362743034864
+run_name: rare-bass-30
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795191505412
+status: 3
+tags: []
+user_id: PC

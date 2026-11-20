@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/791550974258193901/f11ea7bbdf8e426090f3dea72746932a/artifacts
+end_time: 1795193122317
+entry_point_name: ''
+experiment_id: '791550974258193901'
+lifecycle_stage: active
+run_id: f11ea7bbdf8e426090f3dea72746932a
+run_name: angry-shrimp-470
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795193105883
+status: 3
+tags: []
+user_id: PC

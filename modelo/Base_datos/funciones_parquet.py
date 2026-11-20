@@ -233,6 +233,10 @@ class Funciones:
             if temporal.exists():
                 shutil.rmtree(temporal)
 
+    def particion_unica_ordenada(self, df, columna: str, n: int = 1):
+        """Ordena un dataframe por la columna especificada y lo deja con n particiones."""
+        return df.orderBy(columna).coalesce(n)
+
     def filtrar_dataset(self, df, columna, valor):
         """Devuelve un dataset solo con las filas en las que cierta columna tenga cierto valor."""
         return df.filter(col(columna) == valor)
@@ -240,3 +244,10 @@ class Funciones:
     def seleccionar_columnas(self, df, *columnas):
         """Devuelve un dataset solo con las columnas pasadas por argumento."""
         return df.select(*columnas)
+
+    def convertir_a_columna(self, valor):
+        """Convierte un valor a una columna."""
+        return lit(valor)
+
+    def añadir_columna(self, df, nombre_columna: str, columna):
+        return df.withColumn(nombre_columna, columna)
