@@ -53,13 +53,32 @@ class Practica:
 
     def practica3(self):
         print("Ejercicio 1 práctica 3\n")
-        self.entrega3.Ejercicio1()
+        predictions, resultado, num_clusters_generados, k = self.entrega3.Ejercicio1()
+        # comprobación pedida por consola
+        print(f"Run ID en MLflow: {resultado['run_id']}")
+        print(f"Número de agrupaciones configuradas (k): {k}")
+        print(f"Número de agrupaciones generadas en predicciones: {num_clusters_generados}")
+        print(f"Métrica Silhouette: {resultado['silhouette']:.4f}")
+        print("\nDistribución de días por clúster:")
+        predictions.groupBy("prediction").count().orderBy("prediction").show()
+
         print("Ejercicio 2 práctica 3\n")
-        self.entrega3.Ejercicio2()
+        mejor_k, mejor_loss = self.entrega3.Ejercicio2()
+        # comprobación por pantalla
+        print(f"Número de agrupaciones (k) seleccionado por Hyperopt: {mejor_k}")
+        print(f"Mejor Silhouette (distancia coseno) obtenida: {-mejor_loss:.4f}")
+        print("Usando la distancia coseno en la métrica se obtiene un silhouette bajo debido a que los precios de apertura y cierre no tienen mucha" \
+        "diferencia entre sí entonces el ángulo es pequeño y el coseno también. Por ello la métrica con distancia euclídea del ejercicio anterior" \
+        "es mejor para este caso.\n")
+
         print("Ejercicio 3 práctica 3\n")
         self.entrega3.Ejercicio3()
+
         print("Ejercicio 4 práctica 3\n")
-        self.entrega3.Ejercicio4()
+        resultado_v1 = self.entrega3.Ejercicio4()
+        # comprobación de que obtenemos el mismo resultado que en el Ej1
+        print(f"\nSilhouette obtenida con features v1: {resultado_v1['silhouette']:.4f}\n")
+
         print("Ejercicio 5 práctica 3\n")
         self.entrega3.Ejercicio5()
 

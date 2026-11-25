@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/PC/Documents/Tercero/Mineria_de_datos/Aplicacion_IBEX35/mlruns/976051615453618205/6fb2f04af395446f82026737e2c40d11/artifacts
+end_time: 1795612397120
+entry_point_name: ''
+experiment_id: '976051615453618205'
+lifecycle_stage: active
+run_id: 6fb2f04af395446f82026737e2c40d11
+run_name: capable-auk-759
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795612367929
+status: 3
+tags: []
+user_id: PC
